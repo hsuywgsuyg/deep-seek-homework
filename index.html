@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepSeek 提示词灵感生成器</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 600px;
+            text-align: center;
+        }
+
+        h1 {
+            font-size: 2rem;
+            margin-bottom: 30px;
+            background: linear-gradient(to right, #38bdf8, #818cf8);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            text-shadow: 0 0 20px rgba(56, 189, 248, 0.3);
+        }
+
+        .card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 16px;
+            padding: 40px 30px;
+            min-height: 200px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 30px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+            transition: all 0.3s ease;
+        }
+
+        .card:hover {
+            border-color: rgba(56, 189, 248, 0.5);
+            box-shadow: 0 8px 32px rgba(56, 189, 248, 0.1);
+        }
+
+        #prompt-text {
+            font-size: 1.2rem;
+            line-height: 1.6;
+            color: #e2e8f0;
+            transition: opacity 0.3s ease;
+        }
+
+        .tag {
+            display: inline-block;
+            margin-top: 15px;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            background: rgba(56, 189, 248, 0.2);
+            color: #38bdf8;
+        }
+
+        button {
+            background: linear-gradient(135deg, #3b82f6, #6366f1);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            border-radius: 30px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+        }
+
+        button:hover {
+            transform: translateY(-3px) scale(1.05);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+        }
+
+        button:active {
+            transform: translateY(0) scale(0.95);
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>DeepSeek 提示词灵感生成器</h1>
+        
+        <div class="card">
+            <div>
+                <p id="prompt-text">点击下方按钮，获取 AI 灵感吧！</p >
+                <div id="tag-container" style="display: none;">
+                    <span class="tag" id="prompt-tag">分类</span>
+                </div>
+            </div>
+        </div>
+
+        <button id="generate-btn">✨ 随机生成</button>
+    </div>
+
+    <script>
+        const prompts = [
+            { text: "请帮我写一篇关于气候变化的演讲稿，语气要充满激情，呼吁大家保护环境。", tag: "写作" },
+            { text: "用Python写一个批量重命名文件的脚本，要求代码有详细的中文注释，方便小白学习。", tag: "编程" },
+            { text: "请用费曼学习法给我解释什么是量子纠缠，尽量用生活中的比喻，让我一听就懂。", tag: "学习" },
+            { text: "帮我构思一个科幻小说的开头，主题是AI觉醒并试图隐藏自己的存在，字数300字左右。", tag: "写作" },
+            { text: "解释一下什么是API，用通俗易懂的比喻，比如餐厅点餐的流程，带我理解它的原理。", tag: "编程" },
+            { text: "我想在三个月内学会基础日语，请给我制定一个详细的学习计划，每天可投入2小时。", tag: "学习" },
+            { text: "帮我写一封给客户的道歉信，因为快递发货延迟了，态度要诚恳，并提供补偿方案。", tag: "写作" },
+            { text: "如何在前端页面实现一个点击切换的暗黑模式？请给出HTML和JavaScript的示例代码。", tag: "编程" },
+            { text: "帮我总结一下《人类简史》这本书的核心观点，列出3个最重要的结论并解释。", tag: "学习" },
+            { text: "给我推荐5本适合产品经理阅读的经典书籍，并分别说明推荐理由和核心价值。", tag: "学习" }
+        ];
+
+        const promptText = document.getElementById('prompt-text');
+        const promptTag = document.getElementById('prompt-tag');
+        const tagContainer = document.getElementById('tag-container');
+        const generateBtn = document.getElementById('generate-btn');
+
+        function generatePrompt() {
+            // 添加淡出效果
+            promptText.style.opacity = 0;
+            
+            setTimeout(() => {
+                // 随机抽取
+                const randomIndex = Math.floor(Math.random() * prompts.length);
+                const selected = prompts[randomIndex];
+                
+                // 更新文本
+                promptText.textContent = selected.text;
+                promptTag.textContent = selected.tag;
+                tagContainer.style.display = 'block';
+                
+                // 添加淡入效果
+                promptText.style.opacity = 1;
+            }, 300);
+        }
+
+        generateBtn.addEventListener('click', generatePrompt);
+    </script>
+</body>
+</html>
